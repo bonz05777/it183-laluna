@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ lyric.title }} - Lyrics</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            background-color: #121212; /* Dark background */
+            color: #ffffff; /* White text for contrast */
+            font-family: 'Arial', sans-serif;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #1db954; /* Spotify green */
+            color: white;
+            padding: 15px 20px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+        .header h1 {
+            flex-grow: 1;
+            text-align: center;
+            margin: 0;
+        }
+        .container {
+            margin-top: 80px; /* Space for fixed header */
+            padding: 20px;
+            margin-bottom: 10rem;
+        }
+        footer {
+            background-color: #1db954; /* Spotify green */
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+        pre {
+            background-color: #282828; /* Dark background for lyrics */
+            padding: 15px;
+            color:#ffffff;
+            border-radius: 8px; /* Rounded corners */
+            overflow-x: auto; /* Allow horizontal scrolling */
+        }
+        .btn-warning {
+            background-color: #ffa500; /* Custom edit button color */
+            border: none; /* Remove border */
+        }
+        .btn-warning:hover {
+            background-color: #ff8c00; /* Lighter edit button color on hover */
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="{% url 'lyrics_list' %}" class="btn btn-light"><i class="fas fa-arrow-left"></i> Back</a>
+        <h1>{{ lyric.title }}</h1>
+    </div>
+    <div class="container">
+        <h2>Artist: {{ lyric.artist }}</h2>
+        <h3>Lyrics:</h3>
+        <pre>{{ lyric.lyrics }}</pre>
+        <a href="{% url 'lyrics_update' lyric.pk %}" class="btn btn-warning"><i class="fas fa-edit"></i> Edit</a>
+    </div>
+    <footer>
+        <p>&copy; {{ current_year }} Bonimae Laluna BSIT IT183</p>
+    </footer>
+</body>
+</html>

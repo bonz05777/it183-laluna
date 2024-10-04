@@ -1,0 +1,296 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Lyrics</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    {% csrf_token %}
+
+    <style>
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding-bottom: 60px; /* Space for fixed footer */
+        }
+
+        .header {
+            background-color: #1DB954; /* Spotify green */
+            color: white;
+            padding: 15px 20px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header h1 {
+            margin: 0;
+            text-align: center;
+        }
+
+        .search-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            padding: 0 20px;
+        }
+
+        .search-container input {
+            margin-left: 10px;
+            width: 300px;
+            border-radius: 20px;
+            border: none;
+            padding: 10px;
+        }
+
+        .container {
+            margin-top: 7rem;
+        }
+
+        .card {
+            background-color: #282828;
+            color: #ffffff;
+            margin-top: .4rem;
+            transition: transform 0.3s;
+            border: none;
+        }
+
+
+        .card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        .card-actions {
+            display: flex;
+            justify-content: space-between; /* Space between button and heart */
+            align-items: center; /* Center items vertically */
+        }
+                
+
+        footer {
+            background-color: #1DB954;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .btn {
+            border-radius: 20px;
+        }
+
+        .btn-warning {
+            background-color: #ffcc00;
+            border-color: #ffcc00;
+        }
+
+        .btn-danger {
+            background-color: #ff3b30;
+            border-color: #ff3b30;
+            margin-right: 5rem;
+        }
+
+        .favorite-btn {
+            border: none;
+            background-color: transparent;
+            cursor: pointer;
+            padding: 0;
+            outline: none; 
+            flex-shrink: 0; /* Prevent shrinking */
+        }
+
+        .favorite-btn i {
+            font-size: 1.5rem;
+            color: #ffffff; /* Default heart color */
+           
+        }
+
+        .favorite-btn i.clicked {
+            color: red; /* Heart turns red when clicked */
+        }
+
+        /* Tab styling */
+        .nav-tabs {
+            margin-bottom: 1rem;
+        }
+
+        .tab-content {
+            margin-top: 2rem;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="search-container">
+            <a href="{% url 'lyrics_create' %}" class="btn btn-primary"><i class="fas fa-plus"></i> Add New Lyrics</a>
+            <h1>Lyrics List</h1>
+            <div class="d-flex align-items-center">
+                <select id="sort" class="form-control" style="width: 150px; margin-right: 10px;">
+                    <option value="title">Sort by Title</option>
+                    <option value="artist">Sort by Artist</option>
+                </select>
+                <input type="text" id="search" placeholder="Search lyrics..." class="form-control">
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Tab navigation -->
+        <ul class="nav nav-tabs" id="lyricsTabs">
+            <li class="nav-item">
+                <a class="nav-link active" href="#all-lyrics" data-toggle="tab">All</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#favorite-lyrics" data-toggle="tab">Favorites</a>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            
+            <!-- All lyrics tab -->
+<div id="all-lyrics" class="tab-pane fade show active">
+    <div class="row" id="lyrics-list">
+        {% for lyric in lyrics %}
+            <div class="col-md-4 mb-4 lyrics-item" data-id="{{ lyric.pk }}">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a href="{% url 'lyrics_detail' lyric.pk %}" class="text-white">{{ lyric.title }}</a>
+                        </h5>
+                        <p class="card-text">by {{ lyric.artist }}</p>
+                        <a href="{% url 'lyrics_update' lyric.pk %}" class="btn btn-warning"><i class="fas fa-edit"></i> Edit</a>
+                        <a href="{% url 'lyrics_delete' lyric.pk %}" 
+                           class="btn btn-danger" 
+                           onclick="return confirm('Are you sure you want to delete this lyric?');">
+                           <i class="fas fa-trash"></i> Delete
+                        </a>
+                        <button class="btn favorite-btn" data-id="{{ lyric.pk }}" data-title="{{ lyric.title }}" data-artist="{{ lyric.artist }}">
+                            <i class="far fa-heart"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Favorites tab -->
+<div id="favorite-lyrics" class="tab-pane fade">
+    <div class="row" id="favorite-items">
+        {% for favorite in favorites %}
+            <div class="col-md-4 mb-4 favorite-item" data-id="{{ favorite.pk }}">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a href="{% url 'lyrics_detail' favorite.pk %}" class="text-white">{{ favorite.title }}</a>
+                        </h5>
+                        <p class="card-text">by {{ favorite.artist }}</p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <script>
+            // Real-time search functionality
+            document.getElementById('search').addEventListener('input', function() {
+                const query = this.value.toLowerCase();
+                const lyricsItems = document.querySelectorAll('.lyrics-item');
+
+                lyricsItems.forEach(function(item) {
+                    const title = item.querySelector('.card-title').textContent.toLowerCase();
+                    const artist = item.querySelector('.card-text').textContent.toLowerCase();
+
+                    if (title.includes(query) || artist.includes(query)) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+
+            // Sorting functionality
+            document.getElementById('sort').addEventListener('change', function() {
+                const sortBy = this.value;
+                const lyricsList = Array.from(document.querySelectorAll('.lyrics-item'));
+
+                lyricsList.sort((a, b) => {
+                    const titleA = a.querySelector('.card-title').textContent.toLowerCase();
+                    const titleB = b.querySelector('.card-title').textContent.toLowerCase();
+                    const artistA = a.querySelector('.card-text').textContent.toLowerCase();
+                    const artistB = b.querySelector('.card-text').textContent.toLowerCase();
+
+                    if (sortBy === 'title') {
+                        return titleA.localeCompare(titleB);
+                    } else if (sortBy === 'artist') {
+                        return artistA.localeCompare(artistB);
+                    }
+                });
+
+                const container = document.getElementById('lyrics-list');
+                lyricsList.forEach(item => container.appendChild(item));
+            });
+
+            // JavaScript to toggle heart icon and display favorites in the tab
+document.querySelectorAll('.favorite-btn').forEach(button => {
+    button.addEventListener('click', function () {
+        const icon = this.querySelector('i');
+        const lyricId = this.getAttribute('data-id');
+        const lyricTitle = this.getAttribute('data-title');
+        const lyricArtist = this.getAttribute('data-artist');
+
+        icon.classList.toggle('far'); // Empty heart
+        icon.classList.toggle('fas'); // Solid heart
+        icon.classList.toggle('clicked'); // Toggle red color
+
+        // Check if heart is clicked (favorite)
+        if (icon.classList.contains('clicked')) {
+            // Add to favorite list
+            const favoriteItems = document.getElementById('favorite-items');
+            const favoriteItem = document.createElement('div');
+            favoriteItem.classList.add('col-md-4', 'mb-4', 'favorite-item');
+            favoriteItem.innerHTML = `
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a href="/lyrics/${lyricId}/" class="text-white">${lyricTitle}</a>
+                        </h5>
+                        <p class="card-text">by ${lyricArtist}</p>
+                    </div>
+                </div>`;
+            favoriteItems.appendChild(favoriteItem);
+        } else {
+            // Remove from favorite list
+            const favoriteItems = document.getElementById('favorite-items');
+            const favoriteItem = favoriteItems.querySelector(`[data-id="${lyricId}"]`);
+            if (favoriteItem) favoriteItem.remove();
+        }
+    });
+});
+
+        </script>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Music Lyrics Application. All Rights Reserved.</p>
+    </footer>
+</body>
+</html>
