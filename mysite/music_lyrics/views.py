@@ -4,6 +4,8 @@ from .models import Lyrics
 from .forms import LyricsForm
 from django.http import HttpResponseRedirect
 
+
+
 def lyrics_list(request):
     lyrics = Lyrics.objects.all()
     return render(request, 'music_lyrics/lyrics_list.html', {'lyrics': lyrics})

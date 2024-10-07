@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -62,43 +61,9 @@
             border: none;
         }
 
-
         .card:hover {
             transform: scale(1.02);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-        }
-        .card-actions {
-            display: flex;
-            justify-content: space-between; /* Space between button and heart */
-            align-items: center; /* Center items vertically */
-        }
-                
-
-        footer {
-            background-color: #1DB954;
-            color: white;
-            text-align: center;
-            padding: 15px 0;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-        }
-
-        .btn {
-            border-radius: 20px;
-        }
-
-        .btn-warning {
-            background-color: #ffcc00;
-            border-color: #ffcc00;
-        }
-
-        .btn-danger {
-            background-color: #ff3b30;
-            border-color: #ff3b30;
-            margin-right: 5rem;
         }
 
         .favorite-btn {
@@ -113,11 +78,22 @@
         .favorite-btn i {
             font-size: 1.5rem;
             color: #ffffff; /* Default heart color */
-           
         }
 
         .favorite-btn i.clicked {
             color: red; /* Heart turns red when clicked */
+        }
+
+        footer {
+            background-color: #1DB954;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
         }
 
         /* Tab styling */
@@ -128,7 +104,6 @@
         .tab-content {
             margin-top: 2rem;
         }
-
     </style>
 </head>
 <body>
@@ -159,138 +134,158 @@
         </ul>
 
         <div class="tab-content">
-            
             <!-- All lyrics tab -->
-<div id="all-lyrics" class="tab-pane fade show active">
-    <div class="row" id="lyrics-list">
-        {% for lyric in lyrics %}
-            <div class="col-md-4 mb-4 lyrics-item" data-id="{{ lyric.pk }}">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <a href="{% url 'lyrics_detail' lyric.pk %}" class="text-white">{{ lyric.title }}</a>
-                        </h5>
-                        <p class="card-text">by {{ lyric.artist }}</p>
-                        <a href="{% url 'lyrics_update' lyric.pk %}" class="btn btn-warning"><i class="fas fa-edit"></i> Edit</a>
-                        <a href="{% url 'lyrics_delete' lyric.pk %}" 
-                           class="btn btn-danger" 
-                           onclick="return confirm('Are you sure you want to delete this lyric?');">
-                           <i class="fas fa-trash"></i> Delete
-                        </a>
-                        <button class="btn favorite-btn" data-id="{{ lyric.pk }}" data-title="{{ lyric.title }}" data-artist="{{ lyric.artist }}">
-                            <i class="far fa-heart"></i>
-                        </button>
-                    </div>
+            <div id="all-lyrics" class="tab-pane fade show active">
+                <div class="row" id="lyrics-list">
+                    {% for lyric in lyrics %}
+                        <div class="col-md-4 mb-4 lyrics-item" data-id="{{ lyric.pk }}">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <a href="{% url 'lyrics_detail' lyric.pk %}" class="text-white">{{ lyric.title }}</a>
+                                    </h5>
+                                    <p class="card-text">by {{ lyric.artist }}</p>
+                                    <a href="{% url 'lyrics_update' lyric.pk %}" class="btn btn-warning"><i class="fas fa-edit"></i> Edit</a>
+                                    <a href="{% url 'lyrics_delete' lyric.pk %}" 
+                                       class="btn btn-danger" 
+                                       onclick="return confirm('Are you sure you want to delete this lyric?');">
+                                       <i class="fas fa-trash"></i> Delete
+                                    </a>
+                                    <button class="btn favorite-btn" data-id="{{ lyric.pk }}" data-title="{{ lyric.title }}" data-artist="{{ lyric.artist }}">
+                                        <i class="far fa-heart"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
                 </div>
             </div>
-        {% endfor %}
-    </div>
-</div>
 
-<!-- Favorites tab -->
-<div id="favorite-lyrics" class="tab-pane fade">
-    <div class="row" id="favorite-items">
-        {% for favorite in favorites %}
-            <div class="col-md-4 mb-4 favorite-item" data-id="{{ favorite.pk }}">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <a href="{% url 'lyrics_detail' favorite.pk %}" class="text-white">{{ favorite.title }}</a>
-                        </h5>
-                        <p class="card-text">by {{ favorite.artist }}</p>
-                    </div>
+            <!-- Favorites tab -->
+            <div id="favorite-lyrics" class="tab-pane fade">
+                <div class="row" id="favorite-items">
+                    <!-- This section is dynamically populated by JavaScript -->
                 </div>
             </div>
-        {% endfor %}
-    </div>
-</div>
-
-
-
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-        <script>
-            // Real-time search functionality
-            document.getElementById('search').addEventListener('input', function() {
-                const query = this.value.toLowerCase();
-                const lyricsItems = document.querySelectorAll('.lyrics-item');
-
-                lyricsItems.forEach(function(item) {
-                    const title = item.querySelector('.card-title').textContent.toLowerCase();
-                    const artist = item.querySelector('.card-text').textContent.toLowerCase();
-
-                    if (title.includes(query) || artist.includes(query)) {
-                        item.style.display = 'block';
-                    } else {
-                        item.style.display = 'none';
-                    }
-                });
-            });
-
-            // Sorting functionality
-            document.getElementById('sort').addEventListener('change', function() {
-                const sortBy = this.value;
-                const lyricsList = Array.from(document.querySelectorAll('.lyrics-item'));
-
-                lyricsList.sort((a, b) => {
-                    const titleA = a.querySelector('.card-title').textContent.toLowerCase();
-                    const titleB = b.querySelector('.card-title').textContent.toLowerCase();
-                    const artistA = a.querySelector('.card-text').textContent.toLowerCase();
-                    const artistB = b.querySelector('.card-text').textContent.toLowerCase();
-
-                    if (sortBy === 'title') {
-                        return titleA.localeCompare(titleB);
-                    } else if (sortBy === 'artist') {
-                        return artistA.localeCompare(artistB);
-                    }
-                });
-
-                const container = document.getElementById('lyrics-list');
-                lyricsList.forEach(item => container.appendChild(item));
-            });
-
-            // JavaScript to toggle heart icon and display favorites in the tab
-document.querySelectorAll('.favorite-btn').forEach(button => {
-    button.addEventListener('click', function () {
-        const icon = this.querySelector('i');
-        const lyricId = this.getAttribute('data-id');
-        const lyricTitle = this.getAttribute('data-title');
-        const lyricArtist = this.getAttribute('data-artist');
-
-        icon.classList.toggle('far'); // Empty heart
-        icon.classList.toggle('fas'); // Solid heart
-        icon.classList.toggle('clicked'); // Toggle red color
-
-        // Check if heart is clicked (favorite)
-        if (icon.classList.contains('clicked')) {
-            // Add to favorite list
-            const favoriteItems = document.getElementById('favorite-items');
-            const favoriteItem = document.createElement('div');
-            favoriteItem.classList.add('col-md-4', 'mb-4', 'favorite-item');
-            favoriteItem.innerHTML = `
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <a href="/lyrics/${lyricId}/" class="text-white">${lyricTitle}</a>
-                        </h5>
-                        <p class="card-text">by ${lyricArtist}</p>
-                    </div>
-                </div>`;
-            favoriteItems.appendChild(favoriteItem);
-        } else {
-            // Remove from favorite list
-            const favoriteItems = document.getElementById('favorite-items');
-            const favoriteItem = favoriteItems.querySelector(`[data-id="${lyricId}"]`);
-            if (favoriteItem) favoriteItem.remove();
-        }
-    });
-});
-
-        </script>
+        </div>
     </div>
 
     <footer>
-        <p>&copy; 2024 Music Lyrics Application. All Rights Reserved.</p>
+        <p>&copy; 2024 Music Lyrics. All rights reserved.</p>
     </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+    
+    <script>
+        // Real-time search functionality
+        document.getElementById('search').addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            const lyricsItems = document.querySelectorAll('.lyrics-item');
+    
+            lyricsItems.forEach(function(item) {
+                const title = item.querySelector('.card-title').textContent.toLowerCase();
+                const artist = item.querySelector('.card-text').textContent.toLowerCase();
+    
+                item.style.display = (title.includes(query) || artist.includes(query)) ? 'block' : 'none';
+            });
+        });
+    
+        // Sorting functionality
+        document.getElementById('sort').addEventListener('change', function() {
+            const sortBy = this.value;
+            const lyricsList = Array.from(document.querySelectorAll('.lyrics-item'));
+    
+            lyricsList.sort((a, b) => {
+                const titleA = a.querySelector('.card-title').textContent.toLowerCase();
+                const titleB = b.querySelector('.card-title').textContent.toLowerCase();
+                const artistA = a.querySelector('.card-text').textContent.toLowerCase();
+                const artistB = b.querySelector('.card-text').textContent.toLowerCase();
+    
+                return sortBy === 'title' ? titleA.localeCompare(titleB) : artistA.localeCompare(artistB);
+            });
+    
+            const container = document.getElementById('lyrics-list');
+            lyricsList.forEach(item => container.appendChild(item));
+        });
+    
+        // Function to load favorites from localStorage
+        function loadFavorites() {
+            const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+            const favoriteItemsContainer = document.getElementById('favorite-items');
+    
+            favoriteItemsContainer.innerHTML = ''; // Clear existing favorites
+    
+            favorites.forEach(fav => {
+                const favoriteItem = document.createElement('div');
+                favoriteItem.classList.add('col-md-4', 'mb-4', 'favorite-item');
+                favoriteItem.setAttribute('data-id', fav.id);
+                favoriteItem.innerHTML = `
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <a href="/lyrics/lyrics/${fav.id}/" class="text-white">${fav.title}</a>
+                            </h5>
+                            <p class="card-text">by ${fav.artist}</p>
+                            <button class="btn favorite-btn" data-id="${fav.id}" data-title="${fav.title}" data-artist="${fav.artist}">
+                                <i class="fas fa-heart red"></i> <!-- Show filled heart -->
+                            </button>
+                        </div>
+                    </div>`;
+                
+                favoriteItemsContainer.appendChild(favoriteItem);
+            });
+        }
+    
+        function updateHeartIconInAllTab(id, isFavorite) {
+            const heartIcon = $(`.favorite-btn[data-id="${id}"] i`);
+            if (isFavorite) {
+                heartIcon.removeClass('far').addClass('fas red'); // Mark as favorite
+            } else {
+                heartIcon.removeClass('fas red').addClass('far'); // Unmark as favorite
+            }
+        }
+    
+        $(document).ready(function() {
+            // Load favorites on page load
+            loadFavorites();
+    
+            // Check localStorage for favorites and set heart icons accordingly
+            const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+            favorites.forEach(fav => {
+                $(`.favorite-btn[data-id="${fav.id}"] i`).removeClass('far').addClass('fas red'); // Mark favorites as filled red heart
+            });
+    
+            // Event listener for favorite button click
+            $(document).on('click', '.favorite-btn', function() {
+                const id = $(this).data('id');
+                const title = $(this).data('title');
+                const artist = $(this).data('artist');
+    
+                const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+    
+                // Check if the song is already in favorites
+                const index = favorites.findIndex(fav => fav.id === id);
+    
+                if (index === -1) {
+                    // Add to favorites
+                    favorites.push({ id, title, artist });
+                    $(this).find('i').removeClass('far').addClass('fas red'); // Change heart to filled
+                    updateHeartIconInAllTab(id, true); // Update heart icon in All tab
+                } else {
+                    // Remove from favorites
+                    favorites.splice(index, 1);
+                    $(this).find('i').removeClass('fas red').addClass('far'); // Change heart to empty
+                    updateHeartIconInAllTab(id, false); // Update heart icon in All tab
+                }
+    
+                localStorage.setItem('favorites', JSON.stringify(favorites));
+                loadFavorites(); // Reload favorites to reflect changes
+            });
+        });
+    </script>
+    
+
 </body>
 </html>

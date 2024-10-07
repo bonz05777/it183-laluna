@@ -2,6 +2,7 @@
 
 from django.db import models
 
+
 class Lyrics(models.Model):
     title = models.CharField(max_length=200)
     artist = models.CharField(max_length=200)
