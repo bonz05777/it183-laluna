@@ -33,3 +33,6 @@ def lyrics_delete(request, pk):
     lyric = get_object_or_404(Lyrics, pk=pk)
     lyric.delete()
     return HttpResponseRedirect('/lyrics/')  # Redirect back to the lyrics list
+
+def about(request):
+    return render(request, 'music_lyrics/about.html') 
