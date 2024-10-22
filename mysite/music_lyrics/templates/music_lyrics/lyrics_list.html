@@ -267,8 +267,9 @@
                     {% for artist_data in artists_with_songs %}
                     <div class="col-md-4"> <!-- Adjusts to 3 cards per row on medium and larger screens -->
                         <div class="card mt-3">
-                            <div class="card-header" data-toggle="collapse" href="#artist-{{ forloop.counter }}" style="cursor: pointer;">
-                                <h3>{{ artist_data.artist }}</h3>
+                            <div class="card-header d-flex justify-content-between align-items-center" data-toggle="collapse" href="#artist-{{ forloop.counter }}" style="cursor: pointer;">
+                                <h5 class="mb-0">{{ artist_data.artist }}</h5>
+                                <span class="badge badge-primary">{{ artist_data.songs|length }}</span> <!-- Display song count -->
                             </div>
                             <div id="artist-{{ forloop.counter }}" class="collapse">
                                 <div class="card-body">
