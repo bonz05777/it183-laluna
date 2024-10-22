@@ -6,8 +6,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Us</title>
+    <link rel="icon" type="image/png" href={% static 'images/white.png' %}>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
     <style>
         body {
             background-color: #121212;
@@ -70,11 +73,38 @@
             left: 0;
             right: 0;
             z-index: 1000;
-        }
-        footer p{
-            font-size:16px;
+         
         }
 
+        footer p {
+            font-size: 16px;
+        }
+
+        /* Developer Section */
+        .developer-info {
+            margin-top: 6rem;
+            margin-bottom: 6rem;
+            padding: 2rem;
+            background-color: #1F1F1F; /* Dark background for contrast */
+            border-radius: 10px;
+            transition: transform 0.3s ease; /* Smooth scale transition */
+          
+        }
+
+        .developer-info:hover {
+            transform: scale(1.05); /* Scale effect on hover */
+        }
+
+        .developer-image {
+            width: 200px; 
+            height:200px;
+            border-radius: 50%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .developer-image:hover {
+            transform: rotateY(180deg);
+          }
 
         /* Sliding Menu */
         .menu {
@@ -111,6 +141,7 @@
             font-size: 18px;
             margin-left: 15px;
         }
+
         .menu-items li a i {
             margin-right: 20px;
         }
@@ -133,6 +164,120 @@
             margin-right: 2rem; 
             padding: 10px;
         }
+        .logo-placeholder {
+            width: 150px; 
+            height: 150px; 
+            background-color: #ccc; 
+            display: inline-block;
+            margin: 1rem auto; 
+            transition: transform 0.1s ease;
+            border-radius: 10px; 
+            overflow: hidden; 
+        }
+
+        
+        .logo-placeholder:hover {
+            transform: scale(1.1);
+            animation: borderColorChange 1.5s infinite; 
+        }
+        .typing-animation {
+            border-right: 2px solid white; /* Cursor effect */
+            white-space: pre-wrap; /* Allow wrapping and preserve whitespace */
+            overflow: hidden; /* Hide the text while typing */
+            animation: caret 0.8s steps(1) infinite; /* Cursor blink animation */
+            display: inline-block; /* Ensure it can expand with the text */
+        }
+        
+        @keyframes caret {
+            50% {
+                border-color: transparent; /* Hide cursor */
+            }
+        }
+        /* Testimonials Carousel */
+        .testimonial-card {
+            background-color: #1F1F1F;
+            border: none;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            color: white;
+        }
+
+        .testimonial-rating i {
+            color: gold;
+        }
+
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            background-color: #1DB954;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+        }
+
+        /* Card Swipe */
+        .carousel-indicators {
+            position: relative;
+            top: 10px;
+        }
+        
+        /* Adding space between the last content and footer */
+        .container {
+            margin-bottom: 80px; /* Ensures no overlap with footer */
+        }
+        .statistics-section {
+            margin-top: 4rem;
+            text-align: center;
+            color: white;
+        }
+    
+        .chart-container {
+            margin: 2rem auto;
+        }
+        .conclusion-section {
+            margin: 4rem 0;
+            padding: 2rem;
+            background-color: #282828; /* Dark background for contrast */
+            border-radius: 10px;
+            color: #ffffff;
+            display: flex; /* Use flexbox for alignment */
+            flex-direction: column; /* Align items in a column */
+            align-items: center; /* Center items */
+            text-align: center; /* Center text */
+            
+        }
+        
+        .conclusion-section h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+        
+        .conclusion-section p {
+            font-size: 1.2rem;
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px; /* Space between icons */
+        }
+        
+        .social-icon {
+            color: #1DB954; /* Change this to your preferred color */
+            font-size: 1.5rem; /* Size of icons */
+            text-decoration: none;
+        }
+        
+        .social-icon:hover {
+            color: #fff; /* Change color on hover */
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        
     </style>
 </head>
 <body>
@@ -148,32 +293,151 @@
         <div id="menu" class="menu">
             <span id="close-menu" class="close-menu">&times;</span> <!-- Close button -->
             <ul class="menu-items">
-                <li><a href="#" id="home-link"><i class="fas fa-home"></i> Home</a></li> <!-- Home link with icon -->
+                <li><a href="{% url 'lyrics_list' %}"><i class="fas fa-home"></i> Home</a></li>
+
                 <li><a href="{% url 'about' %}"><i class="fas fa-info-circle"></i> About Us</a></li> <!-- About Us link with icon -->
-                <!-- Add more menu items if needed -->
+                <li><a href="#stats-section"><i class="fas fa-chart-pie"></i> Platform Statistics</a></li>
+                <li><a href="#contact-section"><i class="fas fa-envelope"></i> Contact Us</a></li>
+                            <!-- Add more menu items if needed -->
             </ul>
         </div>
 
     </div>
 
-    <!-- Main Content -->
-    <div class="container about-section">
-        <div class="logo-placeholder">
-            <img src="{% static 'images/white.png' %}" alt="About Us Logo" style="width: 100%; height: 100%; object-fit: contain;">
-        </div>
-        <p style="text-align: center; font-size: 14px; font-style: italic;">For those who did not know all the words.</p> <!-- Slogan -->
-        <h1>About Us</h1>
-            <p>Welcome to Lyrics List! This platform is your ultimate guide to the world of song lyrics—because sometimes, 
-                we all need a little help remembering those catchy lines! Whether you're a casual listener who sings
-                 in the shower or a music enthusiast who's convinced they could win a karaoke championship,
-                  we’ve got the lyrics to your favorite tunes ready to go. Explore this platform and discover 
-                  new music through the power of lyrics! </p>
-            </p>
-        <p1>Our mission is to connect people with music by providing 
-            an easy-to-use platform for accessing song lyrics, curated playlists, and the occasional 
-            “Wait, that’s not how it goes!” moment.  Remember, this is for those who didn’t know all the 
-            words—because we’ve all pretended to know the lyrics and ended up mumbling through the chorus! </p1>
+  <!-- Main Content -->
+<div class="container about-section">
+    <div class="logo-placeholder">
+        <img src="{% static 'images/white.png' %}" alt="About Us Logo" style="width: 100%; height: 100%; object-fit: contain;">
     </div>
+    <p style="text-align: center; font-size: 14px; font-style: italic;">For those who did not know all the words.</p> <!-- Slogan -->
+    <h1>About Us</h1>
+    <!-- Typing Animation for First Text -->
+    <div class="typing-animation">
+        <p id="animated-text"></p>
+    </div>
+    <!-- Second Paragraph, initially hidden -->
+    <div id="second-paragraph" style="display: none; opacity: 0;">
+        <p style="font-size: 14px; font-style: italic;">Our mission is to connect people with music by providing 
+            an easy-to-use platform for accessing song lyrics, curated playlists, and the occasional 
+            “Wait, that’s not how it goes!” moment. Remember, this is for those who didn’t know all the 
+            words—because we’ve all pretended to know the lyrics and ended up mumbling through the chorus!</p>
+    </div>
+   
+</div>
+
+
+    <!-- Developer Info Section -->
+    <div class="container developer-info text-center wow animate__animated animate__fadeIn">
+        <h2>Just Me</h2>
+        <img src="{% static 'images/me.jpeg' %}" alt="Developer" class="developer-image mb-3">
+        <p>Hello! I'm Luna, the creator of Lyrics List. My motivation comes from a love for music and 
+           the desire to help others connect with their favorite songs. I believe lyrics have the power to bring 
+           people together, and I hope this platform enhances your musical experience!</p>
+    </div>
+
+
+<!-- Testimonials Section -->
+<div class="container">
+    <h2 class="text-center my-4">What Our Users Say</h2>
+    <div id="testimonialCarousel" class="carousel slide" data-ride="carousel">
+        <!-- Indicators -->
+        <ol class="carousel-indicators">
+            <li data-target="#testimonialCarousel" data-slide-to="0" class="active"></li>
+            <li data-target="#testimonialCarousel" data-slide-to="1"></li>
+            <li data-target="#testimonialCarousel" data-slide-to="2"></li>
+        </ol>
+
+        <!-- Testimonial Cards -->
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <div class="testimonial-card">
+                    <h5>Bonz</h5>
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <p>"Lyrics List is amazing! I always find the lyrics I need."</p>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="testimonial-card">
+                    <h5>Miya</h5>
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="far fa-star"></i>
+                    </div>
+                    <p>"Great platform for finding the lyrics of my favorite songs."</p>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="testimonial-card">
+                    <h5>Luna</h5>
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                        <i class="far fa-star"></i>
+                    </div>
+                    <p>"This site is super helpful for karaoke nights with friends."</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <a class="carousel-control-prev" href="#testimonialCarousel" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#testimonialCarousel" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+    </div>
+</div>
+
+<!-- Platform Statistics Section -->
+<div class="container statistics-section text-center">
+    <h2 id="stats-section">Platform Statistics</h2>
+    
+    <!-- Pie Chart -->
+    <div class="chart-container" style="position: relative; height: 300px; width: 300px; margin: 0 auto;">
+        <canvas id="pieChart"></canvas>
+    </div>
+
+    <!-- Bar Chart -->
+    <div class="chart-container" style="position: relative; height: 300px; width: 600px; margin: 20px auto;">
+        <canvas id="barChart"></canvas>
+    </div>
+
+    <!-- Line Chart -->
+    <div class="chart-container" style="position: relative; height: 300px; width: 600px; margin: 20px auto;">
+        <canvas id="lineChart"></canvas>
+    </div>
+
+    
+<!-- Conclusion Section -->
+<div class="container conclusion-section text-center" id="contact-section">
+    <h2>Contact Us</h2>
+    <p>
+        Share your favorite lyrics effortlessly through these links and let the music bring us all together.
+    </p>
+    <div class="social-links">
+        <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+        <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+        <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+    </div>
+</div>
+
+
+
 
     <!-- Footer -->
     <footer>
@@ -182,49 +446,155 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    
 
     <script>
-        // Toggle the menu open/close
-        document.getElementById('menu-toggle').addEventListener('click', function() {
-            const menu = document.getElementById('menu');
-            // Check if the menu is currently open by checking its right position
-            if (menu.style.right === '0px') {
+        document.addEventListener("DOMContentLoaded", function() {
+            // Initialize WOW.js for animations
+            new WOW().init();
+    
+            // Toggle the menu open/close
+            document.getElementById('menu-toggle').addEventListener('click', function() {
+                const menu = document.getElementById('menu');
+                if (menu.style.right === '0px') {
+                    menu.style.right = '-250px'; // Hide the menu
+                } else {
+                    menu.style.right = '0px'; // Show the menu
+                }
+            });
+    
+            // Close the menu when the close button is clicked
+            document.getElementById('close-menu').addEventListener('click', function() {
+                const menu = document.getElementById('menu');
                 menu.style.right = '-250px'; // Hide the menu
-            } else {
-                menu.style.right = '0px'; // Show the menu
+            });
+    
+            // Typing Animation
+            const textToAnimate = "Welcome to Lyrics List! This platform is your ultimate guide to the world of song lyrics—because sometimes, we all need a little help remembering those catchy lines! Whether you're a casual listener who sings in the shower or a music enthusiast who's convinced they could win a karaoke championship, we’ve got the lyrics to your favorite tunes ready to go. Explore this platform and discover new music through the power of lyrics!";
+            const animatedTextElement = document.getElementById('animated-text');
+            const secondParagraph = document.getElementById('second-paragraph');
+            let index = 0;
+    
+            function type() {
+                if (index < textToAnimate.length) {
+                    animatedTextElement.textContent += textToAnimate.charAt(index);
+                    index++;
+                    setTimeout(type, 50); // Adjust typing speed here (in milliseconds)
+                } else {
+                    // When typing animation is done, show the second paragraph
+                    fadeIn(secondParagraph);
+                }
             }
-        });
-
-        // Close the menu when the close button is clicked
-        document.getElementById('close-menu').addEventListener('click', function() {
-            const menu = document.getElementById('menu');
-            menu.style.right = '-250px'; // Hide the menu
-        });
-
-        // Redirect to lyrics_list.html when "Home" link is clicked
-        document.getElementById('home-link').addEventListener('click', function(event) {
-            event.preventDefault(); // Prevent default link behavior
-            const menu = document.getElementById('menu');
-            menu.style.right = '-250px'; // Hide the menu
-            window.location.href = '/lyrics/'; // Redirect to Home page
-        });
-
-        // Close the menu when clicking outside
-        document.addEventListener('click', function(event) {
-            const menu = document.getElementById('menu');
-            const toggleButton = document.getElementById('menu-toggle');
-            // If clicked outside the menu and the toggle button
-            if (!menu.contains(event.target) && event.target !== toggleButton) {
-                menu.style.right = '-250px'; // Hide the menu
+    
+            // Function to fade in the second paragraph
+            function fadeIn(element) {
+                let opacity = 0;
+                element.style.display = 'block';
+    
+                const fadeEffect = setInterval(function() {
+                    if (opacity < 1) {
+                        opacity += 0.05;
+                        element.style.opacity = opacity;
+                    } else {
+                        clearInterval(fadeEffect);
+                    }
+                }, 100); // Adjust fading speed here
             }
+    
+            // Start typing animation after a short delay
+            setTimeout(type, 500); // Start after 500ms
         });
 
-        // Ensure the menu is properly displayed or hidden on page load
-        window.onload = function() {
-            const menu = document.getElementById('menu');
-            menu.style.right = '-250px'; // Ensure the menu is hidden by default
-        };
+ // Pie Chart (e.g., user distribution by region)
+ var ctxPie = document.getElementById('pieChart').getContext('2d');
+ var pieChart = new Chart(ctxPie, {
+     type: 'pie',
+     data: {
+         labels: ['North America', 'Europe', 'Asia', 'Other'],
+         datasets: [{
+             label: 'Users by Region',
+             data: [45, 25, 20, 10], // Example data
+             backgroundColor: ['#1DB954', '#FF6384', '#36A2EB', '#FFCE56']
+         }]
+     },
+     options: {
+         responsive: true,
+         maintainAspectRatio: false
+     }
+ });
+
+ // Bar Chart (e.g., daily active users)
+ var ctxBar = document.getElementById('barChart').getContext('2d');
+ var barChart = new Chart(ctxBar, {
+     type: 'bar',
+     data: {
+         labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+         datasets: [{
+             label: 'Active Users (in thousands)',
+             data: [30, 50, 40, 60, 70, 55, 45], // Example data
+             backgroundColor: '#1DB954'
+         }]
+     },
+     options: {
+         responsive: true,
+         maintainAspectRatio: false,
+         scales: {
+             y: {
+                 beginAtZero: true
+             }
+         }
+     }
+ });
+
+ // Line Chart (e.g., user growth over the year)
+ var ctxLine = document.getElementById('lineChart').getContext('2d');
+ var lineChart = new Chart(ctxLine, {
+     type: 'line',
+     data: {
+         labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+         datasets: [{
+             label: 'New Users (in thousands)',
+             data: [500, 600, 750, 800, 900, 850, 1000, 1100, 1200, 1300, 1400, 1500], // Example data
+             borderColor: '#1DB954',
+             fill: false
+         }]
+     },
+     options: {
+         responsive: true,
+         maintainAspectRatio: false,
+         scales: {
+             y: {
+                 beginAtZero: true
+             }
+         }
+     }
+ });
+
+ document.querySelectorAll('.sidebar-menu a').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+
+        const targetId = this.getAttribute('href').substring(1); // Get target section ID
+        const targetElement = document.getElementById(targetId);
+
+        const offset = 500; 
+
+        // Get element's position relative to the top of the document
+        const elementPosition = targetElement.getBoundingClientRect().top + window.scrollY;
+        const offsetPosition = elementPosition - offset; // Subtract the offset
+
+        window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth' // Enable smooth scroll
+        });
+    });
+});
+
     </script>
+    
 
 </body>
 </html>
