@@ -5,10 +5,23 @@ from .forms import LyricsForm
 from django.http import HttpResponseRedirect
 
 
-
 def lyrics_list(request):
     lyrics = Lyrics.objects.all()
-    return render(request, 'music_lyrics/lyrics_list.html', {'lyrics': lyrics})
+    artists_with_songs = []
+
+    # Group songs by artist
+    artists = Lyrics.objects.values_list('artist', flat=True).distinct()
+    for artist in artists:
+        songs = Lyrics.objects.filter(artist=artist)
+        artists_with_songs.append({
+            'artist': artist,
+            'songs': songs
+        })
+
+    return render(request, 'music_lyrics/lyrics_list.html', {
+        'lyrics': lyrics,
+        'artists_with_songs': artists_with_songs
+    })
 
 def lyrics_detail(request, pk):
     lyric = get_object_or_404(Lyrics, pk=pk)
