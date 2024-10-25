@@ -3,6 +3,13 @@ from django.shortcuts import render, get_object_or_404
 from .models import Lyrics
 from .forms import LyricsForm
 from django.http import HttpResponseRedirect
+from rest_framework import viewsets
+from .serializers import LyricsSerializer
+
+
+class LyricsViewSet(viewsets.ModelViewSet):
+    queryset = Lyrics.objects.all()
+    serializer_class = LyricsSerializer
 
 
 def lyrics_list(request):
