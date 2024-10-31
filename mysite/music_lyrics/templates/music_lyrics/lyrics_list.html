@@ -185,32 +185,35 @@
 
     <div class="header">
         <div class="search-container">
-            <a href="{% url 'lyrics_create' %}" class="btn btn-primary"><i class="fas fa-plus"></i> Add New Lyrics</a>
+            <a href="{% url 'lyrics_create' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Add New Lyrics
+            </a>
             <h1>Lyrics List</h1>
             <div class="d-flex align-items-center">
+                <!-- Sort dropdown and triangle icon for ascending/descending -->
                 <select id="sort" class="form-control" style="width: 150px; margin-right: 10px;">
                     <option value="title">Sort by Title</option>
                     <option value="artist">Sort by Artist</option>
                 </select>
+                <i id="sortDirection" class="fas fa-sort-amount-down ml-2" style="cursor: pointer;"></i>
+    
                 <input type="text" id="search" placeholder="Search lyrics..." class="form-control">
-                     <!-- Menu Icon -->
-            <button class="btn" id="menu-toggle">
-                <i class="fas fa-bars"></i>
-            </button>
-             <!-- Sliding Menu -->
-            <div id="menu" class="menu">
-            <span id="close-menu" class="close-menu">&times;</span> <!-- Close button -->
-            <ul class="menu-items">
-                <li><a href="{% url 'lyrics_list' %}"><i class="fas fa-home"></i> Home</a></li>
-
-                <li><a href="{% url 'about' %}"><i class="fas fa-info-circle"></i> About Us</a></li> <!-- About Us link with icon -->
-                
-            </ul>
-        </div>
+                <!-- Menu Icon -->
+                <button class="btn" id="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <!-- Sliding Menu -->
+                <div id="menu" class="menu">
+                    <span id="close-menu" class="close-menu">&times;</span> <!-- Close button -->
+                    <ul class="menu-items">
+                        <li><a href="{% url 'lyrics_list' %}"><i class="fas fa-home"></i> Home</a></li>
+                        <li><a href="{% url 'about' %}"><i class="fas fa-info-circle"></i> About Us</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
-
+    
     <div class="container">
         <!-- Tab navigation -->
         <ul class="nav nav-tabs" id="lyricsTabs">
@@ -323,36 +326,131 @@
             });
     
 
-        // Real-time search functionality
-        document.getElementById('search').addEventListener('input', function() {
-            const query = this.value.toLowerCase();
-            const lyricsItems = document.querySelectorAll('.lyrics-item');
-    
-            lyricsItems.forEach(function(item) {
-                const title = item.querySelector('.card-title').textContent.toLowerCase();
-                const artist = item.querySelector('.card-text').textContent.toLowerCase();
-    
-                item.style.display = (title.includes(query) || artist.includes(query)) ? 'block' : 'none';
+            document.addEventListener('DOMContentLoaded', function() {
+                // Update placeholder text based on the active tab
+                document.querySelectorAll('.nav-link').forEach(tab => {
+                    tab.addEventListener('click', function() {
+                        const activeTab = this.getAttribute('href');
+                        const searchInput = document.getElementById('search');
+            
+                        if (activeTab === '#artist-lyrics') {
+                            searchInput.placeholder = 'Search artist...';
+                        } else {
+                            searchInput.placeholder = 'Search lyrics...';
+                        }
+                    });
+                });
+            
+                // Real-time search functionality across tabs
+                document.getElementById('search').addEventListener('input', function() {
+                    const query = this.value.toLowerCase();
+                    const activeTab = document.querySelector('.nav-link.active').getAttribute('href');
+            
+                    if (activeTab === '#all-lyrics') {
+                        const lyricsItems = document.querySelectorAll('.lyrics-item');
+                        lyricsItems.forEach(item => {
+                            const title = item.querySelector('.card-title').textContent.toLowerCase();
+                            const artist = item.querySelector('.card-text').textContent.toLowerCase();
+                            item.style.display = (title.includes(query) || artist.includes(query)) ? 'block' : 'none';
+                        });
+                    } else if (activeTab === '#favorite-lyrics') {
+                        const favoriteItems = document.querySelectorAll('.favorite-item');
+                        favoriteItems.forEach(item => {
+                            const title = item.querySelector('.card-title').textContent.toLowerCase();
+                            const artist = item.querySelector('.card-text').textContent.toLowerCase();
+                            item.style.display = (title.includes(query) || artist.includes(query)) ? 'block' : 'none';
+                        });
+                    } else if (activeTab === '#artist-lyrics') {
+                        const artistCards = document.querySelectorAll('#artist-lyrics .card');
+                        artistCards.forEach(card => {
+                            const artistName = card.querySelector('.card-header h5').textContent.toLowerCase();
+                            card.style.display = artistName.includes(query) ? 'block' : 'none';
+                        });
+                    }
+                });
             });
-        });
+            
+            
     
-        // Sorting functionality
-        document.getElementById('sort').addEventListener('change', function() {
-            const sortBy = this.value;
-            const lyricsList = Array.from(document.querySelectorAll('.lyrics-item'));
-    
-            lyricsList.sort((a, b) => {
-                const titleA = a.querySelector('.card-title').textContent.toLowerCase();
-                const titleB = b.querySelector('.card-title').textContent.toLowerCase();
-                const artistA = a.querySelector('.card-text').textContent.toLowerCase();
-                const artistB = b.querySelector('.card-text').textContent.toLowerCase();
-    
-                return sortBy === 'title' ? titleA.localeCompare(titleB) : artistA.localeCompare(artistB);
+            document.addEventListener('DOMContentLoaded', function () {
+                let ascending = true;
+                const sortDropdown = document.getElementById('sort');
+                const sortDirectionIcon = document.getElementById('sortDirection');
+                const lyricsTabs = document.querySelectorAll('#lyricsTabs .nav-link');
+            
+                // Function to enable/disable "Title" sort option in the "Artist" tab
+                function updateSortOptions() {
+                    const activeTab = document.querySelector('.nav-link.active').getAttribute('href');
+            
+                    if (activeTab === '#artist-lyrics') {
+                        // Disable "Sort by Title" in the Artist tab and default to "Artist"
+                        sortDropdown.querySelector('option[value="title"]').disabled = true;
+                        sortDropdown.value = 'artist';
+                        sortDirectionIcon.style.display = 'none'; // Hide sort icon in Artist tab
+                    } else {
+                        // Enable "Sort by Title" in other tabs
+                        sortDropdown.querySelector('option[value="title"]').disabled = false;
+                        sortDirectionIcon.style.display = 'inline'; // Show sort icon
+                    }
+                }
+            
+                // Event listener for tab clicks to update sort options
+                lyricsTabs.forEach(tab => {
+                    tab.addEventListener('click', updateSortOptions);
+                });
+            
+                // Toggle sorting direction on icon click
+                sortDirectionIcon.addEventListener('click', function () {
+                    ascending = !ascending;
+                    this.classList.toggle('fa-sort-amount-up', ascending);
+                    this.classList.toggle('fa-sort-amount-down', !ascending);
+                    applySorting();
+                });
+            
+                // Apply sorting when the dropdown value changes
+                sortDropdown.addEventListener('change', applySorting);
+            
+                // Sorting logic
+                function applySorting() {
+                    const sortBy = sortDropdown.value;
+                    const activeTab = document.querySelector('.nav-link.active').getAttribute('href');
+                    
+                    if (activeTab === '#artist-lyrics') {
+                        // Sort by artist name in the "Artist" tab
+                        const artistContainer = document.querySelector('#artist-lyrics .row');
+                        const artistCards = Array.from(artistContainer.children);
+            
+                        artistCards.sort((a, b) => {
+                            const artistA = a.querySelector('.card-header h5').textContent.toLowerCase();
+                            const artistB = b.querySelector('.card-header h5').textContent.toLowerCase();
+                            return ascending ? artistA.localeCompare(artistB) : artistB.localeCompare(artistA);
+                        });
+            
+                        // Reattach sorted artist cards to the container
+                        artistCards.forEach(card => artistContainer.appendChild(card));
+                    } else {
+                        // Sort by title or artist in the "All" or "Favorites" tab
+                        const itemsContainer = activeTab === '#all-lyrics' ? document.getElementById('lyrics-list')
+                                            : document.getElementById('favorite-items');
+                        const items = Array.from(itemsContainer.children);
+            
+                        items.sort((a, b) => {
+                            const textA = a.querySelector(sortBy === 'title' ? '.card-title' : '.card-text').textContent.toLowerCase();
+                            const textB = b.querySelector(sortBy === 'title' ? '.card-title' : '.card-text').textContent.toLowerCase();
+                            return ascending ? textA.localeCompare(textB) : textB.localeCompare(textA);
+                        });
+            
+                        // Reattach sorted items to the container
+                        items.forEach(item => itemsContainer.appendChild(item));
+                    }
+                }
+            
+                // Initialize sorting options on page load
+                updateSortOptions();
             });
-    
-            const container = document.getElementById('lyrics-list');
-            lyricsList.forEach(item => container.appendChild(item));
-        });
+            
+            
+            
     
         // Function to load favorites from localStorage
         function loadFavorites() {
