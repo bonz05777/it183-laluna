@@ -5,6 +5,7 @@ from .forms import LyricsForm
 from django.http import HttpResponseRedirect
 from rest_framework import viewsets
 from .serializers import LyricsSerializer
+from django.utils import timezone
 
 
 class LyricsViewSet(viewsets.ModelViewSet):
@@ -15,6 +16,12 @@ class LyricsViewSet(viewsets.ModelViewSet):
 def lyrics_list(request):
     lyrics = Lyrics.objects.all()
     artists_with_songs = []
+
+    # Hottest Songs: Top 5 based on visit count
+    hottest_songs = Lyrics.objects.order_by('-visit_count')[:5]
+    
+    # Latest Songs: Top 5 most recently added
+    latest_songs = Lyrics.objects.order_by('-date_added')[:5]
 
     # Group songs by artist
     artists = Lyrics.objects.values_list('artist', flat=True).distinct()
@@ -27,11 +34,17 @@ def lyrics_list(request):
 
     return render(request, 'music_lyrics/lyrics_list.html', {
         'lyrics': lyrics,
-        'artists_with_songs': artists_with_songs
+        'artists_with_songs': artists_with_songs,
+        'hottest_songs': hottest_songs,
+        'latest_songs': latest_songs
     })
 
 def lyrics_detail(request, pk):
     lyric = get_object_or_404(Lyrics, pk=pk)
+
+     # Increment the visit count each time the detail page is accessed
+    lyric.visit_count += 1
+    lyric.save()
     return render(request, 'music_lyrics/lyrics_detail.html', {'lyric': lyric})
 
 def lyrics_create(request):

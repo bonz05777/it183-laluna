@@ -9,10 +9,12 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
 
     {% csrf_token %}
 
     <style>
+        /* General Styles */
         body {
             background-color: #121212;
             color: #ffffff;
@@ -20,55 +22,67 @@
             margin: 0;
             padding-bottom: 60px; /* Space for fixed footer */
         }
-
+    
         .header {
             background-color: #1DB954; /* Spotify green */
             color: white;
-            padding: 15px 20px;
+            padding: 10px 20px;
             position: fixed;
             width: 100%;
             top: 0;
             z-index: 1000;
         }
-
+    
         .header h1 {
             margin: 0;
+            font-size: 1.5rem;
+            flex-grow: 1;
             text-align: center;
         }
-
+    
         .search-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 10px;
-            padding: 0 20px;
+            padding: 0;
         }
-
+    
+        .search-container .btn,
+        .search-container select,
         .search-container input {
-            margin-left: 10px;
-            width: 300px;
+            flex-shrink: 0;
+        }
+    
+        .search-container select {
+            width: auto;
+            margin-right: 10px;
+        }
+    
+        .search-container input {
+            max-width: 250px;
             border-radius: 20px;
             border: none;
-            padding: 10px;
+            padding: 5px 10px;
         }
-
+    
         .container {
-            margin-top: 7rem;
+            margin-top: 8rem; /* Adjusted for header height */
+            padding: 0 10px;
         }
-
+    
         .card {
             background-color: #282828;
             color: #ffffff;
-            margin-top: .4rem;
+            margin-top: 0.4rem;
             transition: transform 0.3s;
             border: none;
         }
-
+    
         .card:hover {
             transform: scale(1.02);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
         }
-
+    
         .favorite-btn {
             border: none;
             background-color: transparent;
@@ -78,42 +92,45 @@
             justify-content: space-between;
             align-items: center; 
             flex-shrink: 0; 
-          
         }
-        .favorite-btn .button-text {
-            margin-right: auto; 
-        }
-        
-
+    
         .favorite-btn i {
             font-size: 1.5rem;
             color: #ffffff; 
         }
-
+    
         .favorite-btn i.clicked {
             color: red; 
         }
-
+    
         footer {
             background-color: #1DB954;
             color: white;
             text-align: center;
-            padding: 15px 0;
+            padding: 10px 0;
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
             z-index: 1000;
         }
-
+    
         /* Tab styling */
         .nav-tabs {
             margin-bottom: 1rem;
         }
-
+    
         .tab-content {
             margin-top: 2rem;
         }
+
+        /* Sort icon with added padding */
+        #sortDirection {
+            cursor: pointer;
+            padding: 5px; 
+            margin-right: 10px; 
+        }
+        
         /* Sliding Menu */
         .menu {
             position: fixed;
@@ -127,14 +144,14 @@
             transition: right 0.3s ease;
             z-index: 1500;
         }
-
+    
         .menu-items {
             list-style: none;
             padding: 0;
             text-align: left;
             margin-top: 50px; /* Give space for the close icon */
         }
-
+    
         .menu-items li {
             padding: 15px;
             text-align: left;
@@ -142,22 +159,18 @@
             align-items: center; /* Center items vertically */
             justify-content: flex-start; /* Align items to the start */
         }
-
+    
         .menu-items li a {
             color: white;
             text-decoration: none;
             font-size: 18px;
             margin-left: 15px;
         }
-
-        .menu-items li a i {
-            margin-right: 20px;
-        }
-
+    
         .menu-items li a:hover {
             text-decoration: underline;
         }
-
+    
         .close-menu {
             cursor: pointer; /* Indicate that the close button is clickable */
             position: absolute;
@@ -166,12 +179,13 @@
             font-size: 24px;
             color: white;
         }
-
+    
         /* Add custom styles for the menu button */
         #menu-toggle {
-            margin-right: 2rem; 
             padding: 10px;
+            margin-right: 3rem; 
         }
+    
         .song-link {
             color: lightgreen;
         }
@@ -179,7 +193,41 @@
         .song-link:hover {
             color: green; 
         }
+    
+        /* Responsive adjustments */
+        @media (max-width: 576px) {
+            .header {
+                padding: 10px;
+            }
+    
+            .container {
+                margin-top: 9rem; /* Increased space for header and tabs */
+            }
+    
+            .card {
+                margin: 0 auto 1rem;
+                width: 100%;
+            }
+    
+            .search-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+    
+            .search-container input {
+                width: 100%;
+            }
+        }
+        .carousel-item {
+            text-align: center;
+        }
+        .card {
+            background-color: #282828;
+            color: #ffffff;
+        }
     </style>
+    
 </head>
 <body>
 
@@ -190,7 +238,6 @@
             </a>
             <h1>Lyrics List</h1>
             <div class="d-flex align-items-center">
-                <!-- Sort dropdown and triangle icon for ascending/descending -->
                 <select id="sort" class="form-control" style="width: 150px; margin-right: 10px;">
                     <option value="title">Sort by Title</option>
                     <option value="artist">Sort by Artist</option>
@@ -198,13 +245,11 @@
                 <i id="sortDirection" class="fas fa-sort-amount-down ml-2" style="cursor: pointer;"></i>
     
                 <input type="text" id="search" placeholder="Search lyrics..." class="form-control">
-                <!-- Menu Icon -->
                 <button class="btn" id="menu-toggle">
                     <i class="fas fa-bars"></i>
                 </button>
-                <!-- Sliding Menu -->
                 <div id="menu" class="menu">
-                    <span id="close-menu" class="close-menu">&times;</span> <!-- Close button -->
+                    <span id="close-menu" class="close-menu">&times;</span>
                     <ul class="menu-items">
                         <li><a href="{% url 'lyrics_list' %}"><i class="fas fa-home"></i> Home</a></li>
                         <li><a href="{% url 'about' %}"><i class="fas fa-info-circle"></i> About Us</a></li>
@@ -227,15 +272,84 @@
                 <a class="nav-link" href="#artist-lyrics" data-toggle="tab">Artists</a>
             </li>
         </ul>
-
+    
         <div class="tab-content">
             <!-- All lyrics tab -->
             <div id="all-lyrics" class="tab-pane fade show active">
-                <div class="row" id="lyrics-list">
+                <div class="row">
+                    <!-- Hottest Songs Section -->
+                    <div class="col-md-6">
+                        <h2>Hottest Songs</h2>
+                        <div id="hottestCarousel" class="carousel slide" data-ride="carousel">
+                            <div class="carousel-inner">
+                                {% for song in hottest_songs %}
+                                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">
+                                                            <a href="{% url 'lyrics_detail' song.pk %}" class="text-white">{{ song.title }}</a>
+                                                        </h5>
+                                                        <p class="card-text">by {{ song.artist }} - {{ song.visit_count }} visits</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <a class="carousel-control-prev" href="#hottestCarousel" role="button" data-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="sr-only">Previous</span>
+                            </a>
+                            <a class="carousel-control-next" href="#hottestCarousel" role="button" data-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="sr-only">Next</span>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Latest Songs Section -->
+                    <div class="col-md-6">
+                        <h2>Latest Songs</h2>
+                        <div id="latestCarousel" class="carousel slide" data-ride="carousel">
+                            <div class="carousel-inner">
+                                {% for song in latest_songs %}
+                                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">
+                                                            <a href="{% url 'lyrics_detail' song.pk %}" class="text-white">{{ song.title }}</a>
+                                                        </h5>
+                                                        <p class="card-text">by {{ song.artist }} - Added on {{ song.date_added|date:"M d, Y" }}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <a class="carousel-control-prev" href="#latestCarousel" role="button" data-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="sr-only">Previous</span>
+                            </a>
+                            <a class="carousel-control-next" href="#latestCarousel" role="button" data-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="sr-only">Next</span>
+                            </a>
+                        </div>
+                    </div>
+                </div> <!-- End of row -->
+    
+                <div class="row" id="lyrics-list" style="margin-top: 30px;">
                     {% for lyric in lyrics %}
                         <div class="col-md-4 mb-4 lyrics-item" data-id="{{ lyric.pk }}">
                             <div class="card">
                                 <div class="card-body">
+                                    
                                     <h5 class="card-title">
                                         <a href="{% url 'lyrics_detail' lyric.pk %}" class="text-white">{{ lyric.title }}</a>
                                     </h5>
@@ -249,14 +363,13 @@
                                        onclick="return confirm('Are you sure you want to delete this lyric?');">
                                        <i class="fas fa-trash"></i> Delete
                                     </a>
-                                    
                                 </div>
                             </div>
                         </div>
                     {% endfor %}
-                </div>
-            </div>
-
+                </div> <!-- End of lyrics list -->
+            </div> <!-- End of all-lyrics tab -->
+    
             <!-- Favorites tab -->
             <div id="favorite-lyrics" class="tab-pane fade">
                 <div class="row" id="favorite-items">
@@ -264,22 +377,21 @@
                 </div>
             </div>
     
-            <div class="tab-pane fade" id="artist-lyrics">
-                <!-- Artists and their songs -->
+            <!-- Artists tab -->
+            <div id="artist-lyrics" class="tab-pane fade">
                 <div class="row">
                     {% for artist_data in artists_with_songs %}
-                    <div class="col-md-4"> <!-- Adjusts to 3 cards per row on medium and larger screens -->
+                    <div class="col-md-4">
                         <div class="card mt-3">
                             <div class="card-header d-flex justify-content-between align-items-center" data-toggle="collapse" href="#artist-{{ forloop.counter }}" style="cursor: pointer;">
                                 <h5 class="mb-0">{{ artist_data.artist }}</h5>
-                                <span class="badge badge-primary">{{ artist_data.songs|length }}</span> <!-- Display song count -->
+                                <span class="badge badge-primary">{{ artist_data.songs|length }}</span>
                             </div>
                             <div id="artist-{{ forloop.counter }}" class="collapse">
                                 <div class="card-body">
                                     <ul>
                                     {% for song in artist_data.songs %}
                                         <li>
-                                            <!-- Clicking the title redirects to the lyrics detail page -->
                                             <a href="{% url 'lyrics_detail' song.id %}" class="song-link">
                                                 {{ song.title }}
                                             </a>
@@ -293,8 +405,9 @@
                     {% endfor %}
                 </div>
             </div>
-    
+        </div>
     </div>
+    
 
     <footer>
         <p>&copy; 2024 Lyrics List. All rights reserved.</p>
@@ -304,7 +417,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+   
     
     
     <script>
@@ -531,3 +644,6 @@
 
 </body>
 </html>
+
+
+
